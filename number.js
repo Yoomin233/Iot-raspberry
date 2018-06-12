@@ -123,3 +123,8 @@ let mainTimer = setInterval(function anony() {
 // f => 10 => pin 38
 // g => 5 => pin 36
 // dp => 3 => pin 33
+
+// 针脚定义
+// 共阳管 正极: posArr => 共阳管针脚12, 9, 8, 6
+// 共阳管 阴极: negArr =》 共阳管针脚1, 2, 3, 4, 5, 7, 10, 11
+// 共阳管针脚定义参见./img*.jpg
