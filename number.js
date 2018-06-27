@@ -16,7 +16,6 @@ const negArr = [31, 32, 33, 35, 36, 37, 38, 40];
 posArr.concat(negArr).forEach(pin => rpio.open(pin, rpio.OUTPUT, rpio.LOW));
 
 const displayMap = {
-  // 设置低电位以亮起
   0: [31, 32, 35, 37, 38, 40],
   1: [37, 35],
   2: [40, 37, 36, 32, 31],
@@ -36,7 +35,9 @@ const displayMap = {
   error: [31, 36]
 };
 
-// let timer;
+// let lastTime = 0;
+
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function displayNumber(str = "AAA-", num = 0) {
   // let timer;
@@ -53,30 +54,37 @@ function displayNumber(str = "AAA-", num = 0) {
   // 从共阳极最右边位置开始扫描
   let currentPos = 0;
   // posArr.forEach(pin => rpio.write(pin, rpio.HIGH))
-  let timer = setInterval(() => {
+  let timer = setInterval(async () => {
     const lastPos = currentPos === 0 ? 7 : currentPos - 1;
     if (currentPos === 8) {
       currentPos = 0;
     }
-    const currentNum = strNum[currentPos];
+    const currentChar = strNum[currentPos];
     // 设置相应正极高电位, 其他正极低电位
     // posArr.forEach((pin, index) => {
     //   index === currentPos
     //     ? rpio.write(pin, rpio.HIGH)
     //     : rpio.write(pin, rpio.LOW);
     // });
-    rpio.write(posArr[currentPos], rpio.HIGH);
     rpio.write(posArr[lastPos], rpio.LOW);
+    // await wait(1);
+    rpio.write(posArr[currentPos], rpio.HIGH);
     // 抹掉之前的低电位设置
-    const lowArr = displayMap[currentNum].concat(
+    const lowArr = displayMap[currentChar].concat(
       currentPos === dpIndex - 1 ? displayMap["."] : []
     );
+    // negArr.forEach(pin => rpio.write(pin, rpio.HIGH))
+    // lowArr.forEach(pin => rpio.write(pin, rpio.LOW))
+    // await wait(1);
     negArr.forEach(pin =>
       rpio.write(pin, lowArr.includes(pin) ? rpio.LOW : rpio.HIGH)
     );
     currentPos++;
     // process.nextTick(anony);
-  }, 1);
+    // const now = process.uptime();
+    // console.log(`single scan time use: ${(now - lastTime) * 1000}ms`);
+    // lastTime = now;
+  }, 0);
   return timer;
 }
 
